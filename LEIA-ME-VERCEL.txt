@@ -1,0 +1,69 @@
+# Tutorial de instalação na Vercel
+
+## 1. Preparar o projeto
+
+1. Descompacte este ZIP.
+2. Crie um repositório no GitHub e envie **todo o conteúdo da pasta `saphire-blox`** para ele.
+3. Acesse [vercel.com](https://vercel.com), entre na sua conta e clique em **Add New > Project**.
+4. Importe o repositório do GitHub.
+5. A Vercel deve detectar o projeto automaticamente. Se pedir, use:
+   - **Framework Preset:** Vite
+   - **Build Command:** `pnpm build` (ou `npm run build`)
+   - **Output Directory:** deixe o padrão detectado pela Vercel
+
+## 2. Cadastrar as chaves
+
+Antes do primeiro deploy, abra **Settings > Environment Variables** e adicione estas variáveis:
+
+| Nome | Valor | Ambiente |
+|---|---|---|
+| `MISTIC_AUTH` | O texto Base64 que aparece depois de `Basic` no header da MisticPay | Production, Preview e Development |
+| `MISTIC_CLIENT_KEY` | Sua chave pública `pk_` da MisticPay | Production, Preview e Development |
+| `MISTIC_PAYER_DOCUMENT` | `77777777777` ou o documento técnico exigido pela API | Production, Preview e Development |
+
+### Como preencher `MISTIC_AUTH`
+
+Se a MisticPay fornecer um header neste formato:
+
+```text
+Authorization: Basic ABCDEFGHIJKLMNOP
+```
+
+cadastre somente o trecho depois de `Basic `:
+
+```text
+MISTIC_AUTH=ABCDEFGHIJKLMNOP
+```
+
+Não inclua `Authorization:`, não inclua a palavra `Basic` e não coloque aspas, a menos que a própria Vercel solicite.
+
+### Segurança das chaves
+
+- **Nunca** coloque `MISTIC_AUTH` diretamente em arquivos `src/`, no GitHub ou em variáveis que começam com `VITE_`.
+- `MISTIC_AUTH` é lida somente pelo servidor.
+- Se uma chave secreta já foi publicada, revogue-a na MisticPay e gere outra antes do deploy.
+- O arquivo `.env.example` é apenas um modelo e não contém credenciais reais.
+
+## 3. Fazer o deploy
+
+1. Clique em **Deploy** na Vercel.
+2. Aguarde o build terminar.
+3. Abra o domínio `.vercel.app` gerado.
+4. Faça um pedido de teste; confira o Pix e o redirecionamento para o WhatsApp.
+
+Se você alterar variáveis depois de um deploy, faça um novo deploy em **Deployments > Redeploy**, porque as variáveis são aplicadas durante a execução/build do projeto.
+
+## 4. Rodar localmente (opcional)
+
+No terminal, dentro da pasta do projeto:
+
+```bash
+pnpm install
+cp .env.example .env
+# edite .env e preencha as variáveis sem publicar esse arquivo
+pnpm dev
+```
+
+Depois abra o endereço mostrado pelo terminal, normalmente `http://localhost:3000`.
+
+O checkout não mostra nem pede CPF ao comprador. O pedido envia para a MisticPay a descrição completa com produtos, quantidade, nome e, quando necessário, user do Roblox/conta escolhida. Depois que o Pix for confirmado, o comprador é levado ao WhatsApp `+55 14 99704-1442` com uma mensagem montada conforme os produtos comprados.
