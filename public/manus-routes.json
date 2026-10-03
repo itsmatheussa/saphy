@@ -1,0 +1,1 @@
+{"routes":[{"path":"/","title":"Saphire Blox"},{"path":"/carrinho","title":"Carrinho"},{"path":"/produto/:slug","title":"Produto"}]}
